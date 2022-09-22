@@ -8,10 +8,11 @@ def mapeo_inverso_existe(a, b, c, d):
   result = b * c - a * d
   return result != 0
 
-# Función para generar el plano w a través del
-# plano z representado por una imagen y las
-# constantes de a, b, c y d.
-def generacion_plano_w(image, a, b, c, d):
+# Función que representa al mapeo bilineal, 
+# genera el plano w a través del plano z 
+# representado por una imagen y las constantes 
+# de a, b, c y d.
+def mapeo_bilineal(image, a, b, c, d):
   # Primero se revisa si el mapeo inverso se puede hacer
   # debido a que se utiliza
   if not mapeo_inverso_existe(a,b,c,d):
@@ -33,9 +34,9 @@ def generacion_plano_w(image, a, b, c, d):
   # Aquí se genera el plano w, esto se realiza
   # a partir de la inversa para poder rellenar
   # de manera correcta los pixeles
-  wResult = np.zeros((higherX, higherY, 3), dtype = "uint8")
-  for x in range(h):
-    for y in range(w):
+  wResult = np.zeros((higherX + 1, higherY + 1, 3), dtype = "uint8")
+  for x in range(higherX):
+    for y in range(higherY):
       num = complex(x, y)
       new =  (-d * num + b) / (c * num - a)
       newX = int(new.real)
@@ -47,32 +48,13 @@ def generacion_plano_w(image, a, b, c, d):
 # Esta es la función de mapeo lineal, es decir
 # donde solo se necesita el plano z y las constantes
 # a y b, las constante c se considera como 0 y la
-# constante d como 1. Hace lo mismo que la función
-# anterior solo que con estas consideraciones
+# constante d como 1.
 def mapeo_lineal(image, a, b):
-  if not mapeo_inverso_existe(a,b,0,1):
-    return image
-  (h, w) = image.shape[:2]
-  higherX = 0
-  higherY = 0
-  for x in range(h):
-    for y in range(w):
-      num = complex(x, y)
-      new =  a * num + b
-      if higherX < int(new.real):
-        higherX = int(new.real)
-      if higherY < int(new.imag):
-        higherY = int(new.imag)
-  wResult = np.zeros((higherX, higherY, 3), dtype = "uint8")
-  for x in range(higherX):
-    for y in range(higherY):
-      num = complex(x, y)
-      new =  (num - b) / a
-      newX = int(new.real)
-      newY = int(new.imag)
-      if(abs(newX) < h) and (abs(newY) < w):
-          wResult[x][y] = image[newX][newY]
-  return wResult
+  # Como es un caso especial del mapeo bilineal, lo 
+  # que se hace es que se llama a la función de este 
+  # mapeo con los valores de a y b y con c siendo 0 
+  # y de siendo 1.
+  return mapeo_bilineal(image, a, b, 0, 1)
 
 image = cv2.imread("Original.png")
 
@@ -96,7 +78,7 @@ cv2.imwrite("PruebaC.png", PruebaC)
 # La demostración del punto D, que al a ser diferente 
 # de 0 y b diferente de 0 también, se produce una 
 # magnificación una rotación y un desplazamiento
-PruebaD = mapeo_lineal(image, 2.1 + 2.1j, 100)
+PruebaD = mapeo_lineal(image, 2.1 + 2.1j, 500)
 cv2.imwrite("PruebaD.png", PruebaD)
 
 
