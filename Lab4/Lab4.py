@@ -69,7 +69,7 @@ def mapeo_bilineal(image, a, b, c, d):
       if(newY >= 0):
         newY = newY + higherYNegative
       else:
-        newX = higherYNegative - abs(newY)
+        newY = higherYNegative - abs(newY)
       wResult[newX][newY] = (255, 0, 0)
   return wResult
 
@@ -112,7 +112,7 @@ cv2.imwrite("PruebaC.png", PruebaC)
 # La demostración del punto D, que al a ser diferente 
 # de 0 y b diferente de 0 también, se produce una 
 # magnificación una rotación y un desplazamiento
-PruebaD = mapeo_lineal(image, 2.1 + 2.1j, 30 + 50j)
+PruebaD = mapeo_lineal(image, 2.1 + 2.1j, 1000 + 50j)
 cv2.imwrite("PruebaD.png", PruebaD)
 
 
